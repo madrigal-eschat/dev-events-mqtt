@@ -1,50 +1,115 @@
 # Message Format
 
-All messages are JSON published over MQTT.
+All messages are JSON published over MQTT, conforming to the
+[CloudEvents 1.0](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md) specification using
+[Structured Content Mode](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/mqtt-protocol-binding.md#32-structured-content-mode)
+from the MQTT Protocol Binding for CloudEvents Version 1.0.2.
 
 ## Topic Structure
 
-```
-ide-events/{host}
-```
-
-If `host` is omitted from the envelope, publishers should use a static identifier or a placeholder.
+No strict topic structure is placed on the messages: every producer and consumer
+MUST support configuration of the topic to publish or subscribe to. Consumers
+MUST support subscribing to a wildcard topic (ending in `/#`), and SHOULD
+support subscribing to a list of topics, to allow the user to route messages as
+they please.
 
 ## Envelope
 
 ```json
 {
-  "version": 1,
-  "event": "task_success",
-  "timestamp": "2026-06-29T11:00:00.000Z",
-  "source": {
-    "host": "my-machine",
-    "project": "my-project",
-    "ide_family": "jetbrains",
-    "ide": "intellij-idea"
-  },
+  "specversion": "1.0",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "type": "devevents.file.saved",
+  "source": "editor/jeff/jetbrains/intellij-idea",
+  "sourcetype": "editor",
+  "subject": "~/projects/my-project",
+  "time": "2026-06-29T11:00:00.000Z",
   "data": {}
 }
 ```
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `version` | integer | yes | Schema version. Currently `1`. |
-| `event` | string | yes | Event name (snake_case). See [Events](#events). |
-| `timestamp` | ISO 8601 string | yes | Publisher-side time the event fired. |
-| `source.ide_family` | string | yes | Coarse IDE identifier (e.g. `jetbrains`, `vscode`). |
-| `source.ide` | string | yes | Fine-grained IDE identifier (e.g. `intellij-idea`, `pycharm`). |
-| `source.host` | string | no | Hostname of the machine running the IDE. |
-| `source.project` | string | no | Project name open in the IDE. |
+| `specversion` | string | yes | CloudEvents version. Always `"1.0"`. |
+| `id` | string | yes | Unique event ID (e.g. UUID). MUST be unique per `source`. |
+| `type` | string | yes | Event type. See [Events](#events). |
+| `source` | string (URI) | yes | Origin of the event. See [Source](#source). |
+| `sourcetype` | string | yes | Source category (no slashes). See [Source](#source). |
+| `subject` | string | no | Context identifier within the source. See [Subject](#subject). |
+| `time` | ISO 8601 string | yes | Publisher-side time the event fired. |
 | `data` | object | yes | Event-specific payload. See [Events](#events). |
+
+`sourcetype` is a CloudEvents extension attribute.
+
+## Source
+
+`sourcetype` is a string containing no slashes. It determines the format of `source`.
+
+### `editor`
+
+```
+editor/{host}/{family}/{specific}
+```
+
+- `host` — first label of the machine hostname only (`jeff.local` → `jeff`). MUST be user-configurable to allow redaction.
+- `family` — coarse IDE identifier (e.g. `jetbrains`, `vscode`, `visual-studio`). Optional; may be omitted along with `specific`.
+- `specific` — fine-grained IDE identifier (e.g. `intellij-idea`, `pycharm`, `ruby-mine`, `visual-basic-6.0`). Optional; may be omitted.
+
+Examples:
+
+```
+editor/jeff/jetbrains/ruby-mine
+editor/jeff/vscode/vscode
+editor/jeff/visual-studio/visual-basic-6.0
+editor/jeff/jetbrains
+editor/jeff
+```
+
+### `service`
+
+```
+service/{type}/{host}
+```
+
+- `type` — service identifier (e.g. `gitlab`, `github`, `codemagic`).
+- `host` — hostname of the service instance. MUST be omitted when self-hosted CI infrastructure is entirely unavailable.
+
+Examples:
+
+```
+service/gitlab/gitlab.com
+service/gitlab/jeff.biz
+service/codemagic
+```
+
+## Subject
+
+Identifies the project or context within the source.
+
+- For `sourcetype: "editor"`: path to the project root or current working directory. Expressed relative to the user's home directory (e.g. `~/projects/my-project`), or as an absolute path if outside the home directory. Alternatively, an origin URL (e.g. `https://gitlab.com/user/my-project`) MAY be used in place of the path.
+- For `sourcetype: "service"`: full HTTP URL of the project within that system (e.g. `https://gitlab.com/user/my-project`).
+
+`subject` SHOULD be user-configurable to allow redaction.
 
 ## Events
 
-Publishers may implement any subset of these events. Consumers should handle missing event types gracefully.
+`type` values use reverse-DNS-style dot notation, prefixed with `devevents.`.
 
+Producers and consumers alike are NOT OBLIGATED to implement all events.
+Producers MAY produce ANY SUBSET of the events listed and consumers MAY consume
+ANY SUBSET of the events listed below.
 
+Many fields are optional, in which case the field MUST be OMITTED ENTIRELY. No
+fields are nullable: the value is either provided as the type listed, or the
+key is not sent at all.
 
-### `task_start`
+The optional fields are for the preservation of a user's privacy, should they
+wish it. Producers MUST offer the user a configuration option to avoid
+publishing any of the optional fields.
+
+Code quality assessments (inspections, linting, static analysis) can be expressed as task events, not a dedicated event type.
+
+### `devevents.task.started`
 
 | Field | Required |
 |---|---|
@@ -54,7 +119,7 @@ Publishers may implement any subset of these events. Consumers should handle mis
 "data": { "name": "Build Project" }
 ```
 
-### `task_success`
+### `devevents.task.succeeded`
 
 | Field | Required |
 |---|---|
@@ -65,7 +130,7 @@ Publishers may implement any subset of these events. Consumers should handle mis
 "data": { "duration_ms": 1234, "name": "Build Project" }
 ```
 
-### `task_fail`
+### `devevents.task.failed`
 
 | Field | Required |
 |---|---|
@@ -77,13 +142,13 @@ Publishers may implement any subset of these events. Consumers should handle mis
 "data": { "duration_ms": 1234, "name": "Build Project", "exit_code": 1 }
 ```
 
-### `test_start`
+### `devevents.test.started`
 
 ```json
 "data": {}
 ```
 
-### `test_success` / `test_fail`
+### `devevents.test.succeeded` / `devevents.test.failed`
 
 | Field | Required | Description |
 |---|---|---|
@@ -102,7 +167,7 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "duration_ms": 1234, "passed": 1, "failed": 0, "skipped": 0 }
 ```
 
-### `file_save`
+### `devevents.file.saved`
 
 | Field | Required |
 |---|---|
@@ -112,7 +177,7 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "file_path": "src/main.kt" }
 ```
 
-### `breakpoint_hit`
+### `devevents.breakpoint.hit`
 
 | Field | Required |
 |---|---|
@@ -123,19 +188,19 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "file_path": "src/main.kt", "line": 42 }
 ```
 
-### `vcs_commit`
+### `devevents.vcs.committed`
 
 ```json
 "data": {}
 ```
 
-### `vcs_push`
+### `devevents.vcs.pushed`
 
 ```json
 "data": {}
 ```
 
-### `vcs_branch_change`
+### `devevents.vcs.branch.changed`
 
 | Field | Required |
 |---|---|
@@ -145,7 +210,7 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "branch": "main" }
 ```
 
-### `file_open`
+### `devevents.file.opened`
 
 | Field | Required |
 |---|---|
@@ -155,7 +220,7 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "file_path": "src/main.kt" }
 ```
 
-### `file_close`
+### `devevents.file.closed`
 
 | Field | Required |
 |---|---|
@@ -165,36 +230,19 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "file_path": "src/main.kt" }
 ```
 
-### `editor_focus_gained`
+### `devevents.editor.focus.gained`
 
 ```json
 "data": {}
 ```
 
-### `editor_focus_lost`
+### `devevents.editor.focus.lost`
 
 ```json
 "data": {}
 ```
 
-### `inspection_complete`
-
-| Field | Required | Description |
-|---|---|---|
-| `error_count` | yes | Count of errors, or `1`/`0` in normalised mode. |
-| `warning_count` | yes | Count of warnings, or `1`/`0` in normalised mode. |
-
-Publishers may emit normalised counts. In normalised mode: `1` if any found at that level, `0` if none.
-
-```json
-// real counts
-"data": { "error_count": 3, "warning_count": 14 }
-
-// normalised
-"data": { "error_count": 1, "warning_count": 1 }
-```
-
-### `key_presses`
+### `devevents.keypresses`
 
 Emitted once per second when keypress count is greater than zero, and once more when count transitions to zero.
 
