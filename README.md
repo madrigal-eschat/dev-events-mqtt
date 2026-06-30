@@ -1,3 +1,5 @@
+> **Warning:** This project is under active development. Unannounced breaking changes to the protocol and APIs should be expected.
+
 ## dev-events
 
 dev-events is a protocol specification, and a set of applications implementing
