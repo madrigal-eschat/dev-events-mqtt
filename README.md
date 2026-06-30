@@ -37,7 +37,7 @@ As projects are started they will gain links, and as they reach a reasonable
 level of feature-completeness and battle-testedness, they will be checked off.
 
 Producers:
-* [ ] Jetbrains plugin
+* [ ] [Jetbrains plugin](https://github.com/madrigal-eschat/dev-events-jetbrains-publisher)
   * [ ] Publishes to marketplace
 * [ ] VSCode plugin
   * [ ] Publishes to extension library thing I dunno I don't use VSCode much
@@ -61,7 +61,10 @@ Consumers:
 In terms of a rough ordering: The Jetbrains plugin and haptic feedback bridge
 come first, then I'll work on CI bridges.
 
-## Contributing
+## Contributing
 
-For now, until the  the primary suggested contribution is implementing a
-producer plugin for your favourite IDE.
+For now, until the protocol is stabilised and some dogfooding's done, I suggest
+you just save your ideas and don't try to join in.
+
+I'll publish a license for all this crap at some point. Insofar as is practical
+I'll be using Apache 2.0
