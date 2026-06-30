@@ -1,0 +1,47 @@
+# Template: copy to .github/workflows/ci.yml in a Rust project repo.
+# Replace <binary-name> with the cargo [[bin]] name from Cargo.toml.
+# Requires: GH_TOKEN secret — fine-grained PAT with contents/issues/pull-requests write.
+# Cross-repo reusable workflows must be in a public repo, or the caller repo
+# must have access to the workflow repo (same org, or explicit grant).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  commitlint:
+    if: github.event_name == 'pull_request'
+    uses: madrigal-eschat/dev-events/.github/workflows/_commitlint.yml@main
+    with:
+      from-sha: ${{ github.event.pull_request.base.sha }}
+      to-sha: ${{ github.event.pull_request.head.sha }}
+
+  ci:
+    uses: madrigal-eschat/dev-events/.github/workflows/_rust-ci.yml@main
+
+  coverage:
+    if: github.event_name == 'pull_request'
+    uses: madrigal-eschat/dev-events/.github/workflows/_rust-coverage.yml@main
+    with:
+      base-ref: ${{ github.base_ref }}
+
+  release:
+    if: github.event_name == 'push'
+    needs: ci
+    uses: madrigal-eschat/dev-events/.github/workflows/_semrel.yml@main
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  release-assets:
+    if: needs.release.outputs.released == 'true'
+    needs: release
+    uses: madrigal-eschat/dev-events/.github/workflows/_rust-release-assets.yml@main
+    with:
+      binary-name: <binary-name>
+      release-tag: ${{ needs.release.outputs.tag }}
+    permissions:
+      contents: write

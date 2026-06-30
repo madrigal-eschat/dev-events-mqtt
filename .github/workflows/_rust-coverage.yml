@@ -1,0 +1,52 @@
+name: Rust Coverage
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Path to the Cargo project root, relative to repo root.
+        type: string
+        required: false
+        default: '.'
+      base-ref:
+        description: Base branch name to diff against (e.g. main).
+        type: string
+        required: false
+        default: main
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ inputs.working-directory }}
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
+      - name: Generate coverage report
+        run: cargo llvm-cov --locked --lcov --output-path lcov.info
+
+      - name: Install diff-cover
+        run: pip install diff-cover
+
+      - name: Check diff coverage
+        run: >
+          diff-cover lcov.info
+          --compare-branch=origin/${{ inputs.base-ref }}
+          --fail-under=100
+          --diff-range-notation=...

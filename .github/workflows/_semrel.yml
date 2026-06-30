@@ -1,0 +1,62 @@
+name: Semantic Release
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Path to the project root containing .releaserc.json, relative to repo root.
+        type: string
+        required: false
+        default: '.'
+    outputs:
+      released:
+        description: "'true' if a new release was published."
+        value: ${{ jobs.release.outputs.released }}
+      version:
+        description: The new semver version string, e.g. 1.2.3.
+        value: ${{ jobs.release.outputs.version }}
+      tag:
+        description: The full git tag, e.g. v1.2.3.
+        value: ${{ jobs.release.outputs.tag }}
+    secrets:
+      GH_TOKEN:
+        description: >
+          PAT with contents:write, issues:write, pull-requests:write.
+          Needed so @semantic-release/git pushes can trigger downstream workflows.
+          Falls back to GITHUB_TOKEN if not provided (push-triggered workflows won't fire).
+        required: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.semrel.outputs.new_release_published }}
+      version: ${{ steps.semrel.outputs.new_release_version }}
+      tag: ${{ steps.semrel.outputs.new_release_git_tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Release
+        id: semrel
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          working_directory: ${{ inputs.working-directory }}
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/exec
+            @semantic-release/git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}

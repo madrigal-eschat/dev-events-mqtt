@@ -1,0 +1,67 @@
+name: Rust Release Assets
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Path to the Cargo project root, relative to repo root.
+        type: string
+        required: false
+        default: '.'
+      binary-name:
+        description: Name of the binary produced by cargo build --release.
+        type: string
+        required: true
+      release-tag:
+        description: Git tag of the GitHub release to attach assets to.
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-upload:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset-suffix: linux-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset-suffix: macos-aarch64
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-tag }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ inputs.working-directory }}
+          key: release-${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Stage asset
+        run: |
+          BIN="target/${{ matrix.target }}/release/${{ inputs.binary-name }}"
+          ASSET="${{ inputs.binary-name }}-${{ matrix.asset-suffix }}"
+          cp "$BIN" "$ASSET"
+          echo "ASSET=$ASSET" >> "$GITHUB_ENV"
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ inputs.release-tag }}" "$ASSET" --clobber
