@@ -51,7 +51,7 @@ Producers:
   * [ ] Codemagic
 
 Consumers:
-* [ ] Haptic feedback bridge with pluggable backends
+* [ ] [Haptic feedback bridge](https://github.com/madrigal-eschat/dev-events-haptics-bridge) with pluggable backends
   * [ ] [buttplug.io](https://buttplug.io/) API v4 backend
 * [ ] Example home-assistant configurations for controlling lights
 * [ ] Example home-assistant configurations for collecting stats
