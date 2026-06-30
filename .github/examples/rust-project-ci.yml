@@ -15,31 +15,31 @@ on:
 jobs:
   commitlint:
     if: github.event_name == 'pull_request'
-    uses: madrigal-eschat/dev-events/.github/workflows/_commitlint.yml@main
+    uses: madrigal-eschat/dev-events-mqtt/.github/workflows/_commitlint.yml@main
     with:
       from-sha: ${{ github.event.pull_request.base.sha }}
       to-sha: ${{ github.event.pull_request.head.sha }}
 
   ci:
-    uses: madrigal-eschat/dev-events/.github/workflows/_rust-ci.yml@main
+    uses: madrigal-eschat/dev-events-mqtt/.github/workflows/_rust-ci.yml@main
 
   coverage:
     if: github.event_name == 'pull_request'
-    uses: madrigal-eschat/dev-events/.github/workflows/_rust-coverage.yml@main
+    uses: madrigal-eschat/dev-events-mqtt/.github/workflows/_rust-coverage.yml@main
     with:
       base-ref: ${{ github.base_ref }}
 
   release:
     if: github.event_name == 'push'
     needs: ci
-    uses: madrigal-eschat/dev-events/.github/workflows/_semrel.yml@main
+    uses: madrigal-eschat/dev-events-mqtt/.github/workflows/_semrel.yml@main
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   release-assets:
     if: needs.release.outputs.released == 'true'
     needs: release
-    uses: madrigal-eschat/dev-events/.github/workflows/_rust-release-assets.yml@main
+    uses: madrigal-eschat/dev-events-mqtt/.github/workflows/_rust-release-assets.yml@main
     with:
       binary-name: <binary-name>
       release-tag: ${{ needs.release.outputs.tag }}
