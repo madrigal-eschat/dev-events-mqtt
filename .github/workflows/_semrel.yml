@@ -40,9 +40,6 @@ jobs:
       tag: ${{ steps.semrel.outputs.new_release_git_tag }}
 
     steps:
-      - name: Debug GH_TOKEN visibility
-        run: echo "GH_TOKEN received in release job = ${{ secrets.GH_TOKEN != '' }}"
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
