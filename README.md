@@ -53,8 +53,9 @@ Producers:
 Consumers:
 * [ ] [Haptic feedback bridge](https://github.com/madrigal-eschat/dev-events-haptics-bridge) with pluggable backends
   * [ ] [buttplug.io](https://buttplug.io/) API v4 backend
-* [ ] Example home-assistant configurations for controlling lights
-* [ ] Example home-assistant configurations for collecting stats
+* [ ] home-assistant bridge
+  * [ ] Example home-assistant configurations for controlling lights
+  * [ ] Example home-assistant configurations for collecting stats
 * [ ] Redaction consumer - republishes messages received to a new topic, where
       the new messages are stripped of identifying information.
 
