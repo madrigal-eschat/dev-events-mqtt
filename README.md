@@ -11,22 +11,21 @@ uses - and even placing the consumer on a different machine than the producer.
 This allows the following things:
 
 * Collecting your own self-hosted personal IDE usage statistics.
-* Only needing a relatively simple and small plugin to provide complex
-  functionality.
+* Only needing a small plugin to provide complex functionality.
 * Avoiding writing multiple plugins per-IDE for unrelated uses of the events
 * Avoiding writing plugins for multiple IDEs for the same use of events from
   different IDEs
 * Work-safe plugin for not-safe-for-work purposes.
 
 Additionally, because of the choice of MQTT as the transfer mechanism, we allow
-easy integration with existing automation software such as home-assistant for
-e.g. flashing the room red when a test run fails.
+direct integration with existing automation software such as home-assistant
+for e.g. flashing the room red when a test run fails.
 
 ## Getting Started
 
 * Provision yourself an MQTT broker accessible to the machine your IDE is on
 * Install and configure a producer plugin
-* Hook something up at the other end to consume it.
+* Wire something up at the other end to consume it.
   Some services will be made available in my other repos (see the roadmap!)
   But for things such as home-assistant, it is up to you to figure it out :)
   The message format is described in [MESSAGE-FORMAT.md](MESSAGE-FORMAT.md)
@@ -64,7 +63,7 @@ come first, then I'll work on CI bridges.
 ## Contributing
 
 For now, until the protocol is stabilised and some dogfooding's done, I suggest
-you just save your ideas and don't try to join in.
+you save your ideas and don't try to join in.
 
-I'll publish a license for all this crap at some point. Insofar as is practical
+I'll publish a license for all this at some point. Insofar as is practical
 I'll be using Apache 2.0

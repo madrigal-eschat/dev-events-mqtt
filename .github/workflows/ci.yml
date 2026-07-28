@@ -10,3 +10,6 @@ jobs:
     with:
       from-sha: ${{ github.event.pull_request.base.sha }}
       to-sha: ${{ github.event.pull_request.head.sha }}
+
+  prose-lint:
+    uses: ./.github/workflows/_prose-lint.yml
