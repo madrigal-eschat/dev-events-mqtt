@@ -1,0 +1,20 @@
+name: Prose lint
+
+on:
+  workflow_call:
+
+jobs:
+  prose-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install alex
+        run: npm install --no-save alex
+
+      - name: Lint prose
+        run: npx alex README.md MESSAGE-FORMAT.md
