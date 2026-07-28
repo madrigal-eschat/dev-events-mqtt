@@ -36,6 +36,7 @@ As projects are started they will gain links, and as they reach a reasonable
 level of feature-completeness and battle-testedness, they will be checked off.
 
 Producers:
+
 * [ ] [Jetbrains plugin](https://github.com/madrigal-eschat/dev-events-jetbrains-publisher)
   * [ ] Publishes to marketplace
 * [ ] VSCode plugin
@@ -50,6 +51,7 @@ Producers:
   * [ ] Codemagic
 
 Consumers:
+
 * [ ] [Haptic feedback bridge](https://github.com/madrigal-eschat/dev-events-haptics-bridge) with pluggable backends
   * [ ] [buttplug.io](https://buttplug.io/) API v4 backend
 * [ ] home-assistant bridge

@@ -47,7 +47,7 @@ they please.
 
 ### `editor`
 
-```
+```text
 editor/{host}/{family}/{specific}
 ```
 
@@ -57,7 +57,7 @@ editor/{host}/{family}/{specific}
 
 Examples:
 
-```
+```text
 editor/jeff/jetbrains/ruby-mine
 editor/jeff/vscode/vscode
 editor/jeff/visual-studio/visual-basic-6.0
@@ -67,7 +67,7 @@ editor/jeff
 
 ### `service`
 
-```
+```text
 service/{type}/{host}
 ```
 
@@ -76,7 +76,7 @@ service/{type}/{host}
 
 Examples:
 
-```
+```text
 service/gitlab/gitlab.com
 service/gitlab/jeff.biz
 service/codemagic

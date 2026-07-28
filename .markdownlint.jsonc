@@ -1,0 +1,9 @@
+{
+  "default": true,
+  // Long lines are fine in prose/links/tables; not worth hard-wrapping.
+  "MD013": false,
+  // Enforces exact pipe alignment/spacing in tables; too pedantic to hand-maintain.
+  "MD060": false,
+  // Docs intentionally open with a blockquote callout before the H1.
+  "MD041": false
+}

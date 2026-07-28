@@ -13,3 +13,6 @@ jobs:
 
   prose-lint:
     uses: ./.github/workflows/_prose-lint.yml
+
+  markdown-lint:
+    uses: ./.github/workflows/_markdown-lint.yml
