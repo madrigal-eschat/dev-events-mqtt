@@ -6,13 +6,17 @@ on:
 
 jobs:
   commitlint:
-    uses: ./.github/workflows/_commitlint.yml
+    uses: madrigal-eschat/ci-workflows/.github/workflows/_commitlint.yml@35e6a780365347e506966f8f716dd716de62fda6 # v1.1.0
     with:
       from-sha: ${{ github.event.pull_request.base.sha }}
       to-sha: ${{ github.event.pull_request.head.sha }}
 
   prose-lint:
-    uses: ./.github/workflows/_prose-lint.yml
+    uses: madrigal-eschat/ci-workflows/.github/workflows/_prose-lint.yml@35e6a780365347e506966f8f716dd716de62fda6 # v1.1.0
+    with:
+      files: README.md MESSAGE-FORMAT.md
 
   markdown-lint:
-    uses: ./.github/workflows/_markdown-lint.yml
+    uses: madrigal-eschat/ci-workflows/.github/workflows/_markdown-lint.yml@35e6a780365347e506966f8f716dd716de62fda6 # v1.1.0
+    with:
+      files: README.md MESSAGE-FORMAT.md
