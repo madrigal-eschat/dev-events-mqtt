@@ -254,33 +254,30 @@ Emitted once per second when keypress count is greater than zero, and once more 
 
 The agent event types were added in version 1.1.
 
-Only observable agent states have event types. Orca does not expose a session
-start or idle event, so `devevents.agent.started` and
-`devevents.agent.idle` are not defined. It exposes `working`, `blocked`,
-`waiting`, and `done` states; a `done` state with a failure outcome is reported
-as `devevents.agent.failed`, and other `done` states as
-`devevents.agent.finished`.
+Agent events report an agent's state as it changes. The states are `working`,
+`blocked`, `waiting`, and `done`; a `done` state with a failure outcome is
+reported as `devevents.agent.failed`, and other `done` states as
+`devevents.agent.finished`. There are no session start or idle event types.
 
 The following optional fields may appear in an agent event's `data`:
 
 | Field | Type | Applies to | Description |
 |---|---|---|---|
 | `agent` | string | all agent events | Agent identifier or name, when known. Omit when unknown; never send `null` or a sentinel value. |
-| `session` | string | all agent events | Opaque session identifier, when available. Orca currently exposes no opaque session identifier; do not substitute a pane or terminal identifier. |
+| `session` | string | all agent events | Opaque session identifier, when available. Omit when unavailable; do not substitute a pane or terminal identifier. |
 | `worktree` | string | all agent events | Worktree path or identifier, when available. Omit when unavailable. |
-| `reason` | string | `waiting`, `failed` only | Short machine-readable reason code. Orca currently exposes no waiting or failure reason, so omit this field. |
+| `reason` | string | `waiting`, `failed` only | Short machine-readable reason code. Omit when no reason is available. |
 
 All optional fields MUST be omitted when unavailable, never sent as `null`.
 Prompts, agent output, file contents, and credentials are never valid payload
 fields.
 
-The examples below show `agent` as it appears when the publisher knows it.
-Orca does not currently expose an agent identifier on status changes, so a
+The examples below show `agent` as it appears when the publisher knows it; a
 publisher that cannot determine it omits the field.
 
 ### `devevents.agent.working`
 
-Emitted when Orca reports the agent state `working`.
+Emitted when the agent state changes to `working`.
 
 ```json
 "data": { "agent": "copilot" }
@@ -288,7 +285,7 @@ Emitted when Orca reports the agent state `working`.
 
 ### `devevents.agent.blocked`
 
-Emitted when Orca reports the agent state `blocked`.
+Emitted when the agent state changes to `blocked`.
 
 ```json
 "data": { "agent": "copilot" }
@@ -296,7 +293,7 @@ Emitted when Orca reports the agent state `blocked`.
 
 ### `devevents.agent.waiting`
 
-Emitted when Orca reports the agent state `waiting`.
+Emitted when the agent state changes to `waiting`.
 
 ```json
 "data": { "agent": "copilot" }
@@ -304,7 +301,7 @@ Emitted when Orca reports the agent state `waiting`.
 
 ### `devevents.agent.finished`
 
-Emitted when Orca reports the agent state `done` without a failure outcome.
+Emitted when the agent state changes to `done` without a failure outcome.
 
 ```json
 "data": { "agent": "copilot" }
@@ -312,7 +309,7 @@ Emitted when Orca reports the agent state `done` without a failure outcome.
 
 ### `devevents.agent.failed`
 
-Emitted when Orca reports the agent state `done` with the failure outcome.
+Emitted when the agent state changes to `done` with a failure outcome.
 
 ```json
 "data": { "agent": "copilot" }
