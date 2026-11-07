@@ -40,8 +40,14 @@ derived from [MESSAGE-FORMAT.md](MESSAGE-FORMAT.md), which is the normative
 document and wins on any disagreement. A mismatch between the two is a bug in
 the schema, so please report it.
 
-Publishers and consumers that want the schema should depend on this repository
-as a git dependency pinned to a release tag, never a branch:
+The schema is deliberately strict: it is a conformance test for producers.
+It fails messages with unknown event types or unknown fields in `data`, because
+a producer should only emit what the format defines. Consumers follow the more
+tolerant rules in MESSAGE-FORMAT.md and should not validate incoming messages
+against this schema and drop the ones that fail.
+
+Producers that want the schema should depend on this repository as a git
+dependency pinned to a release tag, never a branch:
 
 ```json
 "dependencies": {
