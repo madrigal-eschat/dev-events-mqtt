@@ -1,5 +1,10 @@
 # Message Format
 
+## Version 1.1
+
+Version 1.1 adds the agent event types below. The message envelope remains
+CloudEvents 1.0; no envelope fields or existing event definitions change.
+
 All messages are JSON published over MQTT, conforming to the
 [CloudEvents 1.0](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md) specification using
 [Structured Content Mode](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/mqtt-protocol-binding.md#32-structured-content-mode)
@@ -248,4 +253,66 @@ Emitted once per second when keypress count is greater than zero, and once more 
 
 ```json
 "data": { "count": 37 }
+```
+
+## Agent events (version 1.1)
+
+Only observable agent states have event types. Orca does not expose a session
+start or idle event, so `devevents.agent.started` and
+`devevents.agent.idle` are not defined. It exposes `working`, `blocked`,
+`waiting`, and `done` states; a `done` state with a failure outcome is reported
+as `devevents.agent.failed`, and other `done` states as
+`devevents.agent.finished`.
+
+The following optional fields may appear in an agent event's `data`:
+
+| Field | Type | Applies to | Description |
+|---|---|---|---|
+| `agent` | string | all agent events | Agent identifier or name, when known. Omit when unknown; never send `null` or a sentinel value. |
+| `session` | string | all agent events | Opaque session identifier, when available. Orca currently exposes no opaque session identifier; do not substitute a pane or terminal identifier. |
+| `worktree` | string | all agent events | Worktree path or identifier, when available. Omit when unavailable. |
+| `reason` | string | `waiting`, `failed` only | Short machine-readable reason code. Orca currently exposes no waiting or failure reason, so omit this field. |
+
+All optional fields MUST be omitted when unavailable, never sent as `null`.
+Prompts, agent output, file contents, and credentials are never valid payload
+fields.
+
+### `devevents.agent.working`
+
+Emitted when Orca reports the agent state `working`.
+
+```json
+"data": { "agent": "copilot" }
+```
+
+### `devevents.agent.blocked`
+
+Emitted when Orca reports the agent state `blocked`.
+
+```json
+"data": { "agent": "copilot" }
+```
+
+### `devevents.agent.waiting`
+
+Emitted when Orca reports the agent state `waiting`.
+
+```json
+"data": { "agent": "copilot" }
+```
+
+### `devevents.agent.finished`
+
+Emitted when Orca reports the agent state `done` without a failure outcome.
+
+```json
+"data": { "agent": "copilot" }
+```
+
+### `devevents.agent.failed`
+
+Emitted when Orca reports the agent state `done` with the failure outcome.
+
+```json
+"data": { "agent": "copilot" }
 ```
