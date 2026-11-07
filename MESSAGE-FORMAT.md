@@ -1,10 +1,5 @@
 # Message Format
 
-## Version 1.1
-
-Version 1.1 adds the agent event types below. The message envelope remains
-CloudEvents 1.0; no envelope fields or existing event definitions change.
-
 All messages are JSON published over MQTT, conforming to the
 [CloudEvents 1.0](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md) specification using
 [Structured Content Mode](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/mqtt-protocol-binding.md#32-structured-content-mode)
@@ -255,7 +250,9 @@ Emitted once per second when keypress count is greater than zero, and once more 
 "data": { "count": 37 }
 ```
 
-## Agent events (version 1.1)
+## Agent events
+
+The agent event types were added in version 1.1.
 
 Only observable agent states have event types. Orca does not expose a session
 start or idle event, so `devevents.agent.started` and
@@ -320,3 +317,10 @@ Emitted when Orca reports the agent state `done` with the failure outcome.
 ```json
 "data": { "agent": "copilot" }
 ```
+
+## Revision history
+
+| Version | Changes |
+|---|---|
+| 1.1 | Added the `devevents.agent.*` event types. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
+| 1.0 | Initial format: CloudEvents 1.0 envelope, task, test, file, vcs, editor and keypress events. |
