@@ -41,6 +41,21 @@ they please.
 
 `sourcetype` is a CloudEvents extension attribute.
 
+### Extension attributes
+
+CloudEvents 1.0 itself permits additional context attributes: an event "MAY
+include any number of additional context attributes with distinct names, known
+as extension attributes", which "MUST follow the same naming convention and use
+the same type system as standard attributes" (names are lower-case letters and
+digits only, values are scalars). A receiver is not required to process
+extension attributes it does not recognise. This comes from the
+[CloudEvents 1.0 specification](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#extension-context-attributes),
+so implementations that need to carry their own data alongside an event use
+extension attributes and need no dedicated place in `data`.
+
+On top of that, this format requires that consumers MUST NOT reject an event
+because of extension attributes they do not recognise.
+
 ## Source
 
 `sourcetype` is a string containing no slashes. It determines the format of `source`.
@@ -249,3 +264,126 @@ Emitted once per second when keypress count is greater than zero, and once more 
 ```json
 "data": { "count": 37 }
 ```
+
+## Agent events
+
+The agent event types were added in version 1.1.
+
+Agent events describe the lifecycle of a coding agent session: the agent
+starts, runs one or more turns, and exits. A turn is one unit of agent work,
+beginning when the agent starts acting on a request and ending when it stops.
+
+The following optional fields may appear in an agent event's `data`:
+
+| Field | Type | Applies to | Description |
+|---|---|---|---|
+| `agent` | string | all agent events | Agent identifier or name, when known. |
+| `session` | string | all agent events | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | all agent events | Worktree path or identifier, when available. |
+
+Optional fields MUST be omitted when unavailable, never sent as `null` or a
+placeholder value. Prompts, agent output, file contents, and credentials are
+never valid payload fields.
+
+### `devevents.agent.started`
+
+Emitted when an agent session starts.
+
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+
+Without optional fields:
+
+```json
+"data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project" }
+```
+
+### `devevents.agent.turn.started`
+
+Emitted when the agent begins a turn.
+
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+
+Without optional fields:
+
+```json
+"data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project" }
+```
+
+### `devevents.agent.turn.ended`
+
+Emitted when the agent ends a turn. `reason` is required and is one of:
+
+| Reason | Meaning |
+|---|---|
+| `waiting` | The agent stopped because it needs input or a decision. |
+| `interrupted` | The turn was stopped before the agent finished, for example cancelled by the user. |
+| `finished` | The agent completed the turn. |
+| `failed` | The turn ended with an error. |
+
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+| `reason` | yes |
+
+Without optional fields:
+
+```json
+"data": { "reason": "finished" }
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project", "reason": "waiting" }
+```
+
+### `devevents.agent.exited`
+
+Emitted when the agent session ends.
+
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+
+Without optional fields:
+
+```json
+"data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project" }
+```
+
+## Revision history
+
+| Version | Changes |
+|---|---|
+| 1.1 | Added the `devevents.agent.*` event types. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
+| 1.0 | Initial format: CloudEvents 1.0 envelope, task, test, file, vcs, editor and keypress events. |
