@@ -277,6 +277,10 @@ All optional fields MUST be omitted when unavailable, never sent as `null`.
 Prompts, agent output, file contents, and credentials are never valid payload
 fields.
 
+The examples below show `agent` as it appears when the publisher knows it.
+Orca does not currently expose an agent identifier on status changes, so a
+publisher that cannot determine it omits the field.
+
 ### `devevents.agent.working`
 
 Emitted when Orca reports the agent state `working`.
