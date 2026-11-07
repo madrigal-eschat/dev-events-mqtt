@@ -5,6 +5,8 @@ All messages are JSON published over MQTT, conforming to the
 [Structured Content Mode](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/mqtt-protocol-binding.md#32-structured-content-mode)
 from the MQTT Protocol Binding for CloudEvents Version 1.0.2.
 
+A JSON Schema derived from this document is provided in `schemas/devevents.schema.json` for convenience. It is not normative: this document wins on any disagreement.
+
 ## Topic Structure
 
 No strict topic structure is placed on the messages: every producer and consumer
