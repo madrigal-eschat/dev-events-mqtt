@@ -41,6 +41,26 @@ they please.
 
 `sourcetype` is a CloudEvents extension attribute.
 
+### Extension attributes
+
+CloudEvents 1.0 itself permits additional context attributes: an event "MAY
+include any number of additional context attributes with distinct names, known
+as extension attributes", which "MUST follow the same naming convention and use
+the same type system as standard attributes" (names are lower-case letters and
+digits only, values are scalars). A receiver is not required to process
+extension attributes it does not recognise. This comes from the
+[CloudEvents 1.0 specification](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#extension-context-attributes),
+so implementations that need to carry their own data alongside an event use
+extension attributes and need no dedicated place in `data`.
+
+On top of that, this format requires:
+
+- Consumers MUST NOT reject an event because of extension attributes they do not
+  recognise.
+- Extension attributes are subject to the same privacy rule as optional fields:
+  they MUST NOT carry prompts, agent output, file contents, or credentials, and
+  producers MUST offer the user a way to avoid publishing them.
+
 ## Source
 
 `sourcetype` is a string containing no slashes. It determines the format of `source`.
