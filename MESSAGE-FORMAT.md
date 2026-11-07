@@ -254,62 +254,56 @@ Emitted once per second when keypress count is greater than zero, and once more 
 
 The agent event types were added in version 1.1.
 
-Agent events report an agent's state as it changes. The states are `working`,
-`blocked`, `waiting`, and `done`; a `done` state with a failure outcome is
-reported as `devevents.agent.failed`, and other `done` states as
-`devevents.agent.finished`. There are no session start or idle event types.
+Agent events describe the lifecycle of a coding agent session: the agent
+starts, runs one or more turns, and exits. A turn is one unit of agent work,
+beginning when the agent starts acting on a request and ending when it stops.
 
 The following optional fields may appear in an agent event's `data`:
 
 | Field | Type | Applies to | Description |
 |---|---|---|---|
-| `agent` | string | all agent events | Agent identifier or name, when known. Omit when unknown; never send `null` or a sentinel value. |
-| `session` | string | all agent events | Opaque session identifier, when available. Omit when unavailable; do not substitute a pane or terminal identifier. |
-| `worktree` | string | all agent events | Worktree path or identifier, when available. Omit when unavailable. |
-| `reason` | string | `waiting`, `failed` only | Short machine-readable reason code. Omit when no reason is available. |
+| `agent` | string | all agent events | Agent identifier or name, when known. |
+| `session` | string | all agent events | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | all agent events | Worktree path or identifier, when available. |
 
-All optional fields MUST be omitted when unavailable, never sent as `null`.
-Prompts, agent output, file contents, and credentials are never valid payload
-fields.
+Optional fields MUST be omitted when unavailable, never sent as `null` or a
+placeholder value. Prompts, agent output, file contents, and credentials are
+never valid payload fields.
 
-The examples below show `agent` as it appears when the publisher knows it; a
-publisher that cannot determine it omits the field.
+### `devevents.agent.started`
 
-### `devevents.agent.working`
-
-Emitted when the agent state changes to `working`.
+Emitted when an agent session starts.
 
 ```json
 "data": { "agent": "copilot" }
 ```
 
-### `devevents.agent.blocked`
+### `devevents.agent.turn.started`
 
-Emitted when the agent state changes to `blocked`.
-
-```json
-"data": { "agent": "copilot" }
-```
-
-### `devevents.agent.waiting`
-
-Emitted when the agent state changes to `waiting`.
+Emitted when the agent begins a turn.
 
 ```json
 "data": { "agent": "copilot" }
 ```
 
-### `devevents.agent.finished`
+### `devevents.agent.turn.ended`
 
-Emitted when the agent state changes to `done` without a failure outcome.
+Emitted when the agent ends a turn. `reason` is required and is one of:
+
+| Reason | Meaning |
+|---|---|
+| `waiting` | The agent stopped because it needs input or a decision. |
+| `interrupted` | The turn was stopped before the agent finished, for example cancelled by the user. |
+| `finished` | The agent completed the turn. |
+| `failed` | The turn ended with an error. |
 
 ```json
-"data": { "agent": "copilot" }
+"data": { "agent": "copilot", "reason": "finished" }
 ```
 
-### `devevents.agent.failed`
+### `devevents.agent.exited`
 
-Emitted when the agent state changes to `done` with a failure outcome.
+Emitted when the agent session ends.
 
 ```json
 "data": { "agent": "copilot" }
