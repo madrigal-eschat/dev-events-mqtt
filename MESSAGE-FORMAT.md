@@ -5,6 +5,8 @@ All messages are JSON published over MQTT, conforming to the
 [Structured Content Mode](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/mqtt-protocol-binding.md#32-structured-content-mode)
 from the MQTT Protocol Binding for CloudEvents Version 1.0.2.
 
+A JSON Schema derived from this document is provided in `schemas/devevents.schema.json` for convenience. It is not normative: this document wins on any disagreement.
+
 ## Topic Structure
 
 No strict topic structure is placed on the messages: every producer and consumer
@@ -53,8 +55,8 @@ extension attributes it does not recognise. This comes from the
 so implementations that need to carry their own data alongside an event use
 extension attributes and need no dedicated place in `data`.
 
-On top of that, this format requires that consumers MUST NOT reject an event
-because of extension attributes they do not recognise.
+On top of that, this format requires that consumers MUST accept an event
+that carries extension attributes they do not recognise.
 
 ## Source
 

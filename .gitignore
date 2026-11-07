@@ -2,3 +2,4 @@
 publishers/
 consumers/
 .worktrees/
+node_modules/

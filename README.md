@@ -30,6 +30,35 @@ for e.g. flashing the room red when a test run fails.
   But for things such as home-assistant, it is up to you to figure it out :)
   The message format is described in [MESSAGE-FORMAT.md](MESSAGE-FORMAT.md)
 
+## JSON Schema
+
+A JSON Schema (draft-07) for the message format is published at
+[schemas/devevents.schema.json](schemas/devevents.schema.json).
+
+The schema is **not normative**. It is a convenience validation artifact
+derived from [MESSAGE-FORMAT.md](MESSAGE-FORMAT.md), which is the normative
+document and wins on any disagreement. A mismatch between the two is a bug in
+the schema, so please report it.
+
+The schema is deliberately strict: it is a conformance test for producers.
+It fails messages with unknown event types or unknown fields in `data`, because
+a producer should only emit what the format defines. Consumers follow the more
+tolerant rules in MESSAGE-FORMAT.md and should not validate incoming messages
+against this schema and drop the ones that fail.
+
+Producers that want the schema should depend on this repository as a git
+dependency pinned to a release tag, never a branch:
+
+```json
+"dependencies": {
+  "dev-events-mqtt": "github:madrigal-eschat/dev-events-mqtt#v1.1.0"
+}
+```
+
+Then load `dev-events-mqtt/schemas/devevents.schema.json`. The schema uses the
+`date-time` and `uri-reference` formats, so enable format validation (for
+example with `ajv-formats`) to get the full checks.
+
 ## Roadmap
 
 As projects are started they will gain links, and as they reach a reasonable
