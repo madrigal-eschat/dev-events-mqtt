@@ -53,13 +53,8 @@ extension attributes it does not recognise. This comes from the
 so implementations that need to carry their own data alongside an event use
 extension attributes and need no dedicated place in `data`.
 
-On top of that, this format requires:
-
-- Consumers MUST NOT reject an event because of extension attributes they do not
-  recognise.
-- Extension attributes are subject to the same privacy rule as optional fields:
-  they MUST NOT carry prompts, agent output, file contents, or credentials, and
-  producers MUST offer the user a way to avoid publishing them.
+On top of that, this format requires that consumers MUST NOT reject an event
+because of extension attributes they do not recognise.
 
 ## Source
 
