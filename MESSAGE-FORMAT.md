@@ -289,16 +289,44 @@ never valid payload fields.
 
 Emitted when an agent session starts.
 
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+
+Without optional fields:
+
 ```json
-"data": { "agent": "copilot" }
+"data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project" }
 ```
 
 ### `devevents.agent.turn.started`
 
 Emitted when the agent begins a turn.
 
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+
+Without optional fields:
+
 ```json
-"data": { "agent": "copilot" }
+"data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project" }
 ```
 
 ### `devevents.agent.turn.ended`
@@ -312,16 +340,45 @@ Emitted when the agent ends a turn. `reason` is required and is one of:
 | `finished` | The agent completed the turn. |
 | `failed` | The turn ended with an error. |
 
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+| `reason` | yes |
+
+Without optional fields:
+
 ```json
-"data": { "agent": "copilot", "reason": "finished" }
+"data": { "reason": "finished" }
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project", "reason": "waiting" }
 ```
 
 ### `devevents.agent.exited`
 
 Emitted when the agent session ends.
 
+| Field | Required |
+|---|---|
+| `agent` | no |
+| `session` | no |
+| `worktree` | no |
+
+Without optional fields:
+
 ```json
-"data": { "agent": "copilot" }
+"data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "agent": "copilot", "session": "3f9c1e2a", "worktree": "~/projects/my-project" }
 ```
 
 ## Revision history
