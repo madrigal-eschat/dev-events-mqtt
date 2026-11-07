@@ -1,0 +1,410 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/madrigal-eschat/dev-events-mqtt/schemas/devevents.schema.json",
+  "title": "dev-events message",
+  "$comment": "NOT NORMATIVE. MESSAGE-FORMAT.md is the normative specification; this schema is a convenience validation artifact derived from it. If the two disagree, MESSAGE-FORMAT.md wins and the schema is the bug.",
+  "description": "Convenience validator for dev-events messages (CloudEvents 1.0 envelope and event payloads), derived from MESSAGE-FORMAT.md version 1.1. Not normative: MESSAGE-FORMAT.md wins on any disagreement.",
+  "type": "object",
+  "required": [
+    "specversion",
+    "id",
+    "type",
+    "source",
+    "sourcetype",
+    "time",
+    "data"
+  ],
+  "properties": {
+    "specversion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "format": "uri-reference",
+      "minLength": 1
+    },
+    "sourcetype": {
+      "type": "string",
+      "pattern": "^[^/]+$"
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data": {
+      "type": "object"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[a-z0-9]+$"
+  },
+  "additionalProperties": {
+    "type": [
+      "string",
+      "boolean",
+      "integer"
+    ]
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "sourcetype"
+        ],
+        "properties": {
+          "sourcetype": {
+            "const": "editor"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "pattern": "^editor/[^/]+(/[^/]+){0,2}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "sourcetype"
+        ],
+        "properties": {
+          "sourcetype": {
+            "const": "service"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "pattern": "^service/[^/]+(/[^/]+)?$"
+          }
+        }
+      }
+    }
+  ],
+  "oneOf": [
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.task.started"
+        },
+        "data": {
+          "$ref": "#/definitions/taskStarted"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.task.succeeded"
+        },
+        "data": {
+          "$ref": "#/definitions/taskSucceeded"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.task.failed"
+        },
+        "data": {
+          "$ref": "#/definitions/taskFailed"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.test.started"
+        },
+        "data": {
+          "$ref": "#/definitions/emptyData"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
+            "devevents.test.succeeded",
+            "devevents.test.failed"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/testCompleted"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
+            "devevents.file.saved",
+            "devevents.file.opened",
+            "devevents.file.closed"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/fileEvent"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.breakpoint.hit"
+        },
+        "data": {
+          "$ref": "#/definitions/breakpoint"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
+            "devevents.vcs.committed",
+            "devevents.vcs.pushed"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/emptyData"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.vcs.branch.changed"
+        },
+        "data": {
+          "$ref": "#/definitions/branchChanged"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
+            "devevents.editor.focus.gained",
+            "devevents.editor.focus.lost"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/emptyData"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.keypresses"
+        },
+        "data": {
+          "$ref": "#/definitions/keypresses"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
+            "devevents.agent.started",
+            "devevents.agent.turn.started",
+            "devevents.agent.exited"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/agent"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "const": "devevents.agent.turn.ended"
+        },
+        "data": {
+          "$ref": "#/definitions/agentTurnEnded"
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "emptyData": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "taskStarted": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "taskSucceeded": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "duration_ms"
+      ]
+    },
+    "taskFailed": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "name": {
+          "type": "string"
+        },
+        "exit_code": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "duration_ms"
+      ]
+    },
+    "testCompleted": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "duration_ms",
+        "passed",
+        "failed",
+        "skipped"
+      ]
+    },
+    "fileEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file_path": {
+          "type": "string"
+        }
+      }
+    },
+    "breakpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file_path": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer"
+        }
+      }
+    },
+    "branchChanged": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "branch": {
+          "type": "string"
+        }
+      }
+    },
+    "keypresses": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "count"
+      ]
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "type": "string"
+        },
+        "session": {
+          "type": "string"
+        },
+        "worktree": {
+          "type": "string"
+        }
+      }
+    },
+    "agentTurnEnded": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "type": "string"
+        },
+        "session": {
+          "type": "string"
+        },
+        "worktree": {
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "waiting",
+            "interrupted",
+            "finished",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "reason"
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "dev-events-mqtt",
+  "version": "1.1.0",
+  "description": "Message format specification and JSON Schema for dev-events over MQTT",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madrigal-eschat/dev-events-mqtt.git"
+  },
+  "files": [
+    "schemas"
+  ],
+  "exports": {
+    "./schemas/devevents.schema.json": "./schemas/devevents.schema.json"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
+  }
+}
