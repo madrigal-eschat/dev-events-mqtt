@@ -55,8 +55,8 @@ extension attributes it does not recognise. This comes from the
 so implementations that need to carry their own data alongside an event use
 extension attributes and need no dedicated place in `data`.
 
-On top of that, this format requires that consumers MUST NOT reject an event
-because of extension attributes they do not recognise.
+On top of that, this format requires that consumers MUST accept an event
+that carries extension attributes they do not recognise.
 
 ## Source
 
