@@ -100,3 +100,14 @@ for (const [name, doc] of Object.entries(invalid)) {
     assert.equal(validate(doc), false);
   });
 }
+
+test("valid: branch extension attribute, alongside unknown extension attributes", () => {
+  assert.ok(validate(envelope("devevents.vcs.pushed", {}, { branch: "feature/login", traceid: "abc" })), JSON.stringify(validate.errors));
+  assert.ok(validate(envelope("devevents.task.succeeded", { duration_ms: 1 }, { branch: "main" })), JSON.stringify(validate.errors));
+});
+
+for (const [name, branch] of Object.entries({ null: null, number: 1, boolean: true, "empty string": "" })) {
+  test(`invalid: ${name} branch extension attribute`, () => {
+    assert.equal(validate(envelope("devevents.vcs.pushed", {}, { branch })), false);
+  });
+}

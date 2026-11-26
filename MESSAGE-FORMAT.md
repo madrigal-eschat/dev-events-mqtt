@@ -40,6 +40,7 @@ they please.
 | `subject` | string | no | Context identifier within the source. See [Subject](#subject). |
 | `time` | ISO 8601 string | yes | Publisher-side time the event fired. |
 | `data` | object | yes | Event-specific payload. See [Events](#events). |
+| `branch` | string | no | Branch the event concerns. See [Extension attributes](#extension-attributes). |
 
 `sourcetype` is a CloudEvents extension attribute.
 
@@ -57,6 +58,24 @@ extension attributes and need no dedicated place in `data`.
 
 On top of that, this format requires that consumers MUST accept an event
 that carries extension attributes they do not recognise.
+
+This format defines one optional extension attribute besides `sourcetype`:
+`branch`, a non-empty string naming the branch the event concerns, in the
+version control system's own terms. It MUST be omitted entirely when it is not
+applicable or cannot be derived, never sent as `null` or an empty string.
+Producers MUST offer the user a configuration option to avoid publishing it.
+
+| Version control system | Value of `branch` |
+|---|---|
+| Git | The branch name. Omitted for tag pushes. |
+| Mercurial | The bookmark if one was pushed, otherwise the commit's named branch. |
+| Subversion | `trunk` or the branch directory name, derived from the path when it follows the trunk / branches layout. Otherwise omitted. |
+| Bazaar | The branch name. |
+
+`branch` may appear on any event. It is meant for `devevents.vcs.pushed`,
+`devevents.task.*` (the branch a CI run ran on) and
+`devevents.vcs.pullrequest.*`, where it is the request's source (head) branch.
+The `data.branch` field of `devevents.vcs.branch.changed` is unchanged.
 
 ## Source
 
