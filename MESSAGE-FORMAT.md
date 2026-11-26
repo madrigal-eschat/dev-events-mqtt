@@ -92,7 +92,7 @@ They are defined for `devevents.vcs.pushed`, `devevents.task.started`,
 `devevents.task.succeeded` and `devevents.task.failed`. Each MUST be omitted
 entirely when it is unknown or not applicable, never sent as `null` or an empty
 string. Producers MUST offer the user a configuration option to avoid
-publishing each of them. `remoteurl` may reveal a private host or a username,
+publishing each of them. `remoteurl` may reveal a private server name or a username,
 so producers SHOULD strip credentials and other userinfo from it.
 
 | Attribute | `sourcetype: "editor"` | `sourcetype: "service"` (e.g. webhook publishers) |
