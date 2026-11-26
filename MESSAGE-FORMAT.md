@@ -343,8 +343,6 @@ Emitted once per second when keypress count is greater than zero, and once more 
 "data": { "count": 37 }
 ```
 
-## Agent events
-
 The agent event types were added in version 1.1.
 
 Agent events describe the lifecycle of a coding agent session: the agent
