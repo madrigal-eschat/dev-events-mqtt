@@ -201,6 +201,21 @@
       "properties": {
         "type": {
           "enum": [
+            "devevents.vcs.pullrequest.opened",
+            "devevents.vcs.pullrequest.updated",
+            "devevents.vcs.pullrequest.merged",
+            "devevents.vcs.pullrequest.closed"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/emptyData"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
             "devevents.editor.focus.gained",
             "devevents.editor.focus.lost"
           ]

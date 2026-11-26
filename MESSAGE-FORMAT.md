@@ -227,6 +227,38 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 "data": { "branch": "main" }
 ```
 
+### `devevents.vcs.pullrequest.opened`
+
+Emitted when a pull request is created or reopened. In this document, "pull request" also covers merge requests and their equivalents on other hosts.
+
+```json
+"data": {}
+```
+
+### `devevents.vcs.pullrequest.updated`
+
+Emitted when the pull request's source branch receives new commits. A metadata-only edit, such as a title change, is not an update.
+
+```json
+"data": {}
+```
+
+### `devevents.vcs.pullrequest.merged`
+
+Emitted when the pull request is merged. A merge does not also emit `devevents.vcs.pullrequest.closed`.
+
+```json
+"data": {}
+```
+
+### `devevents.vcs.pullrequest.closed`
+
+Emitted when the pull request is closed without being merged. `merged` and `closed` are mutually exclusive.
+
+```json
+"data": {}
+```
+
 ### `devevents.file.opened`
 
 | Field | Required |
