@@ -248,7 +248,7 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 
 ### `devevents.vcs.pullrequest.opened`
 
-Emitted when a pull request is created or reopened. In this document, "pull request" also covers merge requests and their equivalents on other hosts.
+Emitted when a pull request is created or reopened. In this document, "pull request" also covers merge requests and their equivalents on other services.
 
 ```json
 "data": {}
