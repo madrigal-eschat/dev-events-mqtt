@@ -21,6 +21,13 @@ const envelope = (type, data, extra = {}) => ({
 
 const agentAll = { agent: "copilot", session: "3f9c1e2a", worktree: "~/projects/my-project" };
 
+const pullRequestAll = {
+  source_repo: "https://github.com/user/fork",
+  source_branch: "feature/login",
+  target_repo: "https://github.com/upstream/project",
+  target_branch: "main",
+};
+
 const valid = {
   "task.started": ["devevents.task.started", { name: "Build Project" }],
   "task.started empty": ["devevents.task.started", {}],
@@ -36,6 +43,14 @@ const valid = {
   "vcs.committed": ["devevents.vcs.committed", {}],
   "vcs.pushed": ["devevents.vcs.pushed", {}],
   "vcs.branch.changed": ["devevents.vcs.branch.changed", { branch: "main" }],
+  "vcs.pullrequest.opened minimal": ["devevents.vcs.pullrequest.opened", {}],
+  "vcs.pullrequest.opened full": ["devevents.vcs.pullrequest.opened", pullRequestAll],
+  "vcs.pullrequest.updated minimal": ["devevents.vcs.pullrequest.updated", {}],
+  "vcs.pullrequest.updated full": ["devevents.vcs.pullrequest.updated", pullRequestAll],
+  "vcs.pullrequest.merged minimal": ["devevents.vcs.pullrequest.merged", {}],
+  "vcs.pullrequest.merged full": ["devevents.vcs.pullrequest.merged", pullRequestAll],
+  "vcs.pullrequest.closed minimal": ["devevents.vcs.pullrequest.closed", {}],
+  "vcs.pullrequest.closed full": ["devevents.vcs.pullrequest.closed", pullRequestAll],
   "editor.focus.gained": ["devevents.editor.focus.gained", {}],
   "editor.focus.lost": ["devevents.editor.focus.lost", {}],
   keypresses: ["devevents.keypresses", { count: 37 }],
@@ -74,6 +89,10 @@ const invalid = {
   "turn.ended missing reason": envelope("devevents.agent.turn.ended", {}),
   "reason on agent.exited": envelope("devevents.agent.exited", { reason: "finished" }),
   "unknown data field": envelope("devevents.agent.started", { prompt: "hi" }),
+  "data field on pullrequest.opened": envelope("devevents.vcs.pullrequest.opened", { title: "x" }),
+  "data field on pullrequest.updated": envelope("devevents.vcs.pullrequest.updated", { title: "x" }),
+  "data field on pullrequest.merged": envelope("devevents.vcs.pullrequest.merged", { title: "x" }),
+  "data field on pullrequest.closed": envelope("devevents.vcs.pullrequest.closed", { title: "x" }),
   "task.succeeded missing duration_ms": envelope("devevents.task.succeeded", { name: "x" }),
   "keypresses missing count": envelope("devevents.keypresses", {}),
   "unknown type": envelope("devevents.nope", {}),
@@ -91,4 +110,18 @@ for (const [name, doc] of Object.entries(invalid)) {
   test(`invalid: ${name}`, () => {
     assert.equal(validate(doc), false);
   });
+}
+
+for (const event of ["opened", "updated", "merged", "closed"]) {
+  const type = `devevents.vcs.pullrequest.${event}`;
+  for (const [field, value] of Object.entries(pullRequestAll)) {
+    test(`valid: ${field} alone on pullrequest.${event}`, () => {
+      assert.ok(validate(envelope(type, { [field]: value })), JSON.stringify(validate.errors));
+    });
+    for (const [name, bad] of Object.entries({ null: null, number: 1 })) {
+      test(`invalid: ${name} ${field} on pullrequest.${event}`, () => {
+        assert.equal(validate(envelope(type, { [field]: bad })), false);
+      });
+    }
+  }
 }

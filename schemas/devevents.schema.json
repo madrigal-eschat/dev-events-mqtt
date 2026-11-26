@@ -3,7 +3,7 @@
   "$id": "https://github.com/madrigal-eschat/dev-events-mqtt/schemas/devevents.schema.json",
   "title": "dev-events message",
   "$comment": "NOT NORMATIVE. MESSAGE-FORMAT.md is the normative specification; this schema is a convenience validation artifact derived from it. If the two disagree, MESSAGE-FORMAT.md wins and the schema is the bug.",
-  "description": "Convenience validator for dev-events messages (CloudEvents 1.0 envelope and event payloads), derived from MESSAGE-FORMAT.md version 1.1. Not normative: MESSAGE-FORMAT.md wins on any disagreement.",
+  "description": "Convenience validator for dev-events messages (CloudEvents 1.0 envelope and event payloads), derived from MESSAGE-FORMAT.md version 1.2. Not normative: MESSAGE-FORMAT.md wins on any disagreement.",
   "type": "object",
   "required": [
     "specversion",
@@ -201,6 +201,21 @@
       "properties": {
         "type": {
           "enum": [
+            "devevents.vcs.pullrequest.opened",
+            "devevents.vcs.pullrequest.updated",
+            "devevents.vcs.pullrequest.merged",
+            "devevents.vcs.pullrequest.closed"
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/pullRequest"
+        }
+      }
+    },
+    {
+      "properties": {
+        "type": {
+          "enum": [
             "devevents.editor.focus.gained",
             "devevents.editor.focus.lost"
           ]
@@ -348,6 +363,24 @@
       "additionalProperties": false,
       "properties": {
         "branch": {
+          "type": "string"
+        }
+      }
+    },
+    "pullRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_repo": {
+          "type": "string"
+        },
+        "source_branch": {
+          "type": "string"
+        },
+        "target_repo": {
+          "type": "string"
+        },
+        "target_branch": {
           "type": "string"
         }
       }
