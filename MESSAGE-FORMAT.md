@@ -469,5 +469,5 @@ With every optional field:
 | Version | Changes |
 |---|---|
 | 1.2 | Added the `devevents.vcs.pullrequest.*` event types. Existing event definitions layout and descriptions made more consistent, but no changes to the fields, their types or semantics were made. |
-| 1.1 | Added the `devevents.agent.*` event types. Existing event definitions layout and descriptions made more consistent, but no changes to the fields, their types or semantics were made. |
+| 1.1 | Added the `devevents.agent.*` event types. No existing event definitions changed. |
 | 1.0 | Initial format: CloudEvents 1.0 envelope, task, test, file, vcs, editor and keypress events. |
