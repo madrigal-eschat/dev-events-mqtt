@@ -463,6 +463,6 @@ With every optional field:
 
 | Version | Changes |
 |---|---|
-| 1.2 | Added the `devevents.vcs.pullrequest.*` event types and the optional `branch` extension attribute. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
+| 1.2 | Added the `devevents.vcs.pullrequest.*` event types and the optional `branch`, `remotename`, `remoteurl` and `remotebranch` extension attributes. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
 | 1.1 | Added the `devevents.agent.*` event types. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
 | 1.0 | Initial format: CloudEvents 1.0 envelope, task, test, file, vcs, editor and keypress events. |
