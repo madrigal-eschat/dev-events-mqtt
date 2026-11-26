@@ -128,9 +128,9 @@ Code quality assessments (inspections, linting, static analysis) can be expresse
 
 ### `devevents.task.started`
 
-| Field | Required |
-|---|---|
-| `name` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | no | Name of the task. |
 
 ```json
 "data": { "name": "Build Project" }
@@ -138,10 +138,10 @@ Code quality assessments (inspections, linting, static analysis) can be expresse
 
 ### `devevents.task.succeeded`
 
-| Field | Required |
-|---|---|
-| `duration_ms` | yes |
-| `name` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `duration_ms` | integer | yes | Duration of the task in milliseconds. |
+| `name` | string | no | Name of the task. |
 
 ```json
 "data": { "duration_ms": 1234, "name": "Build Project" }
@@ -149,11 +149,11 @@ Code quality assessments (inspections, linting, static analysis) can be expresse
 
 ### `devevents.task.failed`
 
-| Field | Required |
-|---|---|
-| `duration_ms` | yes |
-| `name` | no |
-| `exit_code` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `duration_ms` | integer | yes | Duration of the task in milliseconds. |
+| `name` | string | no | Name of the task. |
+| `exit_code` | integer | no | Exit code of the task. |
 
 ```json
 "data": { "duration_ms": 1234, "name": "Build Project", "exit_code": 1 }
@@ -167,12 +167,12 @@ Code quality assessments (inspections, linting, static analysis) can be expresse
 
 ### `devevents.test.succeeded` / `devevents.test.failed`
 
-| Field | Required | Description |
-|---|---|---|
-| `duration_ms` | yes | |
-| `passed` | yes | Count of passed tests, or `1`/`0` in normalised mode. |
-| `failed` | yes | Count of failed tests, or `0`/`1` in normalised mode. |
-| `skipped` | yes | Count of skipped tests, or `0` in normalised mode. |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `duration_ms` | integer | yes | Duration of the test run in milliseconds. |
+| `passed` | integer | yes | Count of passed tests, or `1`/`0` in normalised mode. |
+| `failed` | integer | yes | Count of failed tests, or `0`/`1` in normalised mode. |
+| `skipped` | integer | yes | Count of skipped tests, or `0` in normalised mode. |
 
 Publishers may emit normalised counts to hide real test numbers. In normalised mode: `passed` is `1` on success and `0` on fail; `failed` is `0` on success and `1` on fail; `skipped` is always `0`.
 
@@ -186,9 +186,9 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 
 ### `devevents.file.saved`
 
-| Field | Required |
-|---|---|
-| `file_path` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `file_path` | string | no | Path of the file the event concerns. |
 
 ```json
 "data": { "file_path": "src/main.kt" }
@@ -196,10 +196,10 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 
 ### `devevents.breakpoint.hit`
 
-| Field | Required |
-|---|---|
-| `file_path` | no |
-| `line` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `file_path` | string | no | Path of the file containing the breakpoint. |
+| `line` | integer | no | Line number of the breakpoint. |
 
 ```json
 "data": { "file_path": "src/main.kt", "line": 42 }
@@ -219,9 +219,9 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 
 ### `devevents.vcs.branch.changed`
 
-| Field | Required |
-|---|---|
-| `branch` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `branch` | string | no | Name of the branch. |
 
 ```json
 "data": { "branch": "main" }
@@ -233,12 +233,12 @@ Emitted when a pull request is created or reopened. In this document, "pull requ
 
 The four `devevents.vcs.pullrequest.*` events have the same `data` fields. The event's `subject` identifies the target repository, the one the pull request is opened against.
 
-| Field | Required | Description |
-|---|---|---|
-| `source_repo` | no | Full HTTP URL of the repository the changes come from: a fork, or the target repository's URL for a request within one repository. |
-| `source_branch` | no | Branch in the source repository that the changes come from. |
-| `target_repo` | no | Full HTTP URL of the repository the request is opened against. Normally equal to `subject`; carried so that the payload is self-contained. |
-| `target_branch` | no | Branch in the target repository that the request is to be merged into. |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source_repo` | string | no | Full HTTP URL of the repository the changes come from: a fork, or the target repository's URL for a request within one repository. |
+| `source_branch` | string | no | Branch in the source repository that the changes come from. |
+| `target_repo` | string | no | Full HTTP URL of the repository the request is opened against. Normally equal to `subject`; carried so that the payload is self-contained. |
+| `target_branch` | string | no | Branch in the target repository that the request is to be merged into. |
 
 Without optional fields:
 
@@ -256,12 +256,12 @@ With every optional field:
 
 Emitted when the pull request's source branch receives new commits. A metadata-only edit, such as a title change, is not an update.
 
-| Field | Required |
-|---|---|
-| `source_repo` | no |
-| `source_branch` | no |
-| `target_repo` | no |
-| `target_branch` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source_repo` | string | no | Full HTTP URL of the repository the changes come from: a fork, or the target repository's URL for a request within one repository. |
+| `source_branch` | string | no | Branch in the source repository that the changes come from. |
+| `target_repo` | string | no | Full HTTP URL of the repository the request is opened against. Normally equal to `subject`; carried so that the payload is self-contained. |
+| `target_branch` | string | no | Branch in the target repository that the request is to be merged into. |
 
 Without optional fields:
 
@@ -279,12 +279,12 @@ With every optional field:
 
 Emitted when the pull request is merged. A merge does not also emit `devevents.vcs.pullrequest.closed`.
 
-| Field | Required |
-|---|---|
-| `source_repo` | no |
-| `source_branch` | no |
-| `target_repo` | no |
-| `target_branch` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source_repo` | string | no | Full HTTP URL of the repository the changes come from: a fork, or the target repository's URL for a request within one repository. |
+| `source_branch` | string | no | Branch in the source repository that the changes come from. |
+| `target_repo` | string | no | Full HTTP URL of the repository the request is opened against. Normally equal to `subject`; carried so that the payload is self-contained. |
+| `target_branch` | string | no | Branch in the target repository that the request is to be merged into. |
 
 Without optional fields:
 
@@ -302,12 +302,12 @@ With every optional field:
 
 Emitted when the pull request is closed without being merged. `merged` and `closed` are mutually exclusive.
 
-| Field | Required |
-|---|---|
-| `source_repo` | no |
-| `source_branch` | no |
-| `target_repo` | no |
-| `target_branch` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source_repo` | string | no | Full HTTP URL of the repository the changes come from: a fork, or the target repository's URL for a request within one repository. |
+| `source_branch` | string | no | Branch in the source repository that the changes come from. |
+| `target_repo` | string | no | Full HTTP URL of the repository the request is opened against. Normally equal to `subject`; carried so that the payload is self-contained. |
+| `target_branch` | string | no | Branch in the target repository that the request is to be merged into. |
 
 Without optional fields:
 
@@ -323,9 +323,9 @@ With every optional field:
 
 ### `devevents.file.opened`
 
-| Field | Required |
-|---|---|
-| `file_path` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `file_path` | string | no | Path of the file the event concerns. |
 
 ```json
 "data": { "file_path": "src/main.kt" }
@@ -333,9 +333,9 @@ With every optional field:
 
 ### `devevents.file.closed`
 
-| Field | Required |
-|---|---|
-| `file_path` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `file_path` | string | no | Path of the file the event concerns. |
 
 ```json
 "data": { "file_path": "src/main.kt" }
@@ -357,6 +357,10 @@ With every optional field:
 
 Emitted once per second when keypress count is greater than zero, and once more when count transitions to zero.
 
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `count` | integer | yes | Number of keypresses. |
+
 ```json
 "data": { "count": 37 }
 ```
@@ -369,11 +373,11 @@ beginning when the agent starts acting on a request and ending when it stops.
 
 The following optional fields may appear in an agent event's `data`:
 
-| Field | Type | Applies to | Description |
+| Field | Type | Required | Description |
 |---|---|---|---|
-| `agent` | string | all agent events | Agent identifier or name, when known. |
-| `session` | string | all agent events | Opaque identifier of the agent session, so concurrent agents can be told apart. |
-| `worktree` | string | all agent events | Worktree path or identifier, when available. |
+| `agent` | string | no | Agent identifier or name, when known. |
+| `session` | string | no | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | no | Worktree path or identifier, when available. |
 
 Optional fields MUST be omitted when unavailable, never sent as `null` or a
 placeholder value. Prompts, agent output, file contents, and credentials are
@@ -383,11 +387,11 @@ never valid payload fields.
 
 Emitted when an agent session starts.
 
-| Field | Required |
-|---|---|
-| `agent` | no |
-| `session` | no |
-| `worktree` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `agent` | string | no | Agent identifier or name, when known. |
+| `session` | string | no | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | no | Worktree path or identifier, when available. |
 
 Without optional fields:
 
@@ -405,11 +409,11 @@ With every optional field:
 
 Emitted when the agent begins a turn.
 
-| Field | Required |
-|---|---|
-| `agent` | no |
-| `session` | no |
-| `worktree` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `agent` | string | no | Agent identifier or name, when known. |
+| `session` | string | no | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | no | Worktree path or identifier, when available. |
 
 Without optional fields:
 
@@ -434,12 +438,12 @@ Emitted when the agent ends a turn. `reason` is required and is one of:
 | `finished` | The agent completed the turn. |
 | `failed` | The turn ended with an error. |
 
-| Field | Required |
-|---|---|
-| `agent` | no |
-| `session` | no |
-| `worktree` | no |
-| `reason` | yes |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `agent` | string | no | Agent identifier or name, when known. |
+| `session` | string | no | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | no | Worktree path or identifier, when available. |
+| `reason` | string | yes | Why the turn ended: `waiting`, `interrupted`, `finished` or `failed`, with the meanings listed above. |
 
 Without optional fields:
 
@@ -457,11 +461,11 @@ With every optional field:
 
 Emitted when the agent session ends.
 
-| Field | Required |
-|---|---|
-| `agent` | no |
-| `session` | no |
-| `worktree` | no |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `agent` | string | no | Agent identifier or name, when known. |
+| `session` | string | no | Opaque identifier of the agent session, so concurrent agents can be told apart. |
+| `worktree` | string | no | Worktree path or identifier, when available. |
 
 Without optional fields:
 
