@@ -100,35 +100,3 @@ for (const [name, doc] of Object.entries(invalid)) {
     assert.equal(validate(doc), false);
   });
 }
-
-test("valid: branch extension attribute, alongside unknown extension attributes", () => {
-  assert.ok(validate(envelope("devevents.vcs.pushed", {}, { branch: "feature/login", traceid: "abc" })), JSON.stringify(validate.errors));
-  assert.ok(validate(envelope("devevents.task.succeeded", { duration_ms: 1 }, { branch: "main" })), JSON.stringify(validate.errors));
-});
-
-for (const [name, branch] of Object.entries({ null: null, number: 1, boolean: true, "empty string": "" })) {
-  test(`invalid: ${name} branch extension attribute`, () => {
-    assert.equal(validate(envelope("devevents.vcs.pushed", {}, { branch })), false);
-  });
-}
-
-const remote = { remotename: "origin", remoteurl: "git@example.com:u/p.git", remotebranch: "main" };
-
-test("valid: remote extension attributes, alongside unknown extension attributes", () => {
-  for (const [type, data] of [
-    ["devevents.vcs.pushed", {}],
-    ["devevents.task.started", {}],
-    ["devevents.task.succeeded", { duration_ms: 1 }],
-    ["devevents.task.failed", { duration_ms: 1 }],
-  ]) {
-    assert.ok(validate(envelope(type, data, { branch: "main", ...remote, traceid: "abc" })), JSON.stringify(validate.errors));
-  }
-});
-
-for (const attribute of Object.keys(remote)) {
-  for (const [name, value] of Object.entries({ null: null, number: 1, boolean: true, "empty string": "" })) {
-    test(`invalid: ${name} ${attribute} extension attribute`, () => {
-      assert.equal(validate(envelope("devevents.vcs.pushed", {}, { [attribute]: value })), false);
-    });
-  }
-}

@@ -40,10 +40,6 @@ they please.
 | `subject` | string | no | Context identifier within the source. See [Subject](#subject). |
 | `time` | ISO 8601 string | yes | Publisher-side time the event fired. |
 | `data` | object | yes | Event-specific payload. See [Events](#events). |
-| `branch` | string | no | Branch the event concerns. See [Extension attributes](#extension-attributes). |
-| `remotename` | string | no | Name of the remote. See [Extension attributes](#extension-attributes). |
-| `remoteurl` | string | no | URL of the remote. See [Extension attributes](#extension-attributes). |
-| `remotebranch` | string | no | Branch on the remote. See [Extension attributes](#extension-attributes). |
 
 `sourcetype` is a CloudEvents extension attribute.
 
@@ -61,46 +57,6 @@ extension attributes and need no dedicated place in `data`.
 
 On top of that, this format requires that consumers MUST accept an event
 that carries extension attributes they do not recognise.
-
-This format defines one optional extension attribute besides `sourcetype`:
-`branch`, a non-empty string naming the branch the event concerns, in the
-version control system's own terms. It MUST be omitted entirely when it is not
-applicable or cannot be derived, never sent as `null` or an empty string.
-Producers MUST offer the user a configuration option to avoid publishing it.
-
-| Version control system | `branch` | `remotename` | `remoteurl` | `remotebranch` |
-|---|---|---|---|---|
-| Git | The branch name. Omitted for tag pushes. | The remote's name, e.g. `origin`. | The remote's URL. | The branch name on the remote. |
-| Mercurial | The bookmark if one was pushed, otherwise the commit's named branch. | The path alias, e.g. `default`. | The URL of that path. | The bookmark or named branch on the remote. |
-| Subversion | `trunk` or the branch directory name, derived from the path when it follows the trunk / branches layout. Otherwise omitted. | Omitted. | The repository URL. | Derived from the path in the same way as `branch`. |
-| Bazaar | The branch name. | Omitted. | The parent or push location. | The branch name at that location. |
-
-`branch` may appear on any event. It is meant for `devevents.vcs.pushed`,
-`devevents.task.*` (the branch a CI run ran on) and
-`devevents.vcs.pullrequest.*`, where it is the request's source (head) branch.
-The `data.branch` field of `devevents.vcs.branch.changed` is unchanged.
-
-This format also defines three optional extension attributes that describe a
-version control remote. Each is a non-empty string:
-
-- `remotename`: the name of the remote, as configured locally.
-- `remoteurl`: the URL of that remote.
-- `remotebranch`: the branch on that remote that the push targets, or that the
-  CI run belongs to.
-
-They are defined for `devevents.vcs.pushed`, `devevents.task.started`,
-`devevents.task.succeeded` and `devevents.task.failed`. Each MUST be omitted
-entirely when it is unknown or not applicable, never sent as `null` or an empty
-string. Producers MUST offer the user a configuration option to avoid
-publishing each of them. `remoteurl` may reveal a private server name or a username,
-so producers SHOULD strip credentials and other userinfo from it.
-
-| Attribute | `sourcetype: "editor"` | `sourcetype: "service"` (e.g. webhook publishers) |
-|---|---|---|
-| `branch` | The local branch. | The branch on the service. |
-| `remotename` | The remote pushed to. | Normally omitted. |
-| `remoteurl` | The URL of the remote pushed to. | Normally redundant with `subject`, because the service is the remote. MAY be omitted. |
-| `remotebranch` | The branch pushed to on that remote. | Equals `branch`. |
 
 ## Source
 
@@ -461,6 +417,6 @@ With every optional field:
 
 | Version | Changes |
 |---|---|
-| 1.2 | Added the `devevents.vcs.pullrequest.*` event types and the optional `branch`, `remotename`, `remoteurl` and `remotebranch` extension attributes. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
+| 1.2 | Added the `devevents.vcs.pullrequest.*` event types. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
 | 1.1 | Added the `devevents.agent.*` event types. The envelope remains CloudEvents 1.0 and no existing event definitions changed. |
 | 1.0 | Initial format: CloudEvents 1.0 envelope, task, test, file, vcs, editor and keypress events. |

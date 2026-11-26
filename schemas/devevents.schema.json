@@ -44,22 +44,6 @@
     },
     "data": {
       "type": "object"
-    },
-    "branch": {
-      "type": "string",
-      "minLength": 1
-    },
-    "remotename": {
-      "type": "string",
-      "minLength": 1
-    },
-    "remoteurl": {
-      "type": "string",
-      "minLength": 1
-    },
-    "remotebranch": {
-      "type": "string",
-      "minLength": 1
     }
   },
   "propertyNames": {
