@@ -208,7 +208,7 @@
           ]
         },
         "data": {
-          "$ref": "#/definitions/emptyData"
+          "$ref": "#/definitions/pullRequest"
         }
       }
     },
@@ -363,6 +363,24 @@
       "additionalProperties": false,
       "properties": {
         "branch": {
+          "type": "string"
+        }
+      }
+    },
+    "pullRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_repo": {
+          "type": "string"
+        },
+        "source_branch": {
+          "type": "string"
+        },
+        "target_repo": {
+          "type": "string"
+        },
+        "target_branch": {
           "type": "string"
         }
       }

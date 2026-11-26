@@ -231,32 +231,94 @@ Publishers may emit normalised counts to hide real test numbers. In normalised m
 
 Emitted when a pull request is created or reopened. In this document, "pull request" also covers merge requests and their equivalents on other services.
 
+The four `devevents.vcs.pullrequest.*` events have the same `data` fields. The event's `subject` identifies the target repository, the one the pull request is opened against.
+
+| Field | Required | Description |
+|---|---|---|
+| `source_repo` | no | Full HTTP URL of the repository the changes come from: a fork, or the target repository's URL for a request within one repository. |
+| `source_branch` | no | Branch in the source repository that the changes come from. |
+| `target_repo` | no | Full HTTP URL of the repository the request is opened against. Normally equal to `subject`; carried so that the payload is self-contained. |
+| `target_branch` | no | Branch in the target repository that the request is to be merged into. |
+
+Without optional fields:
+
 ```json
 "data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "source_repo": "https://github.com/user/fork", "source_branch": "feature/login", "target_repo": "https://github.com/upstream/project", "target_branch": "main" }
 ```
 
 ### `devevents.vcs.pullrequest.updated`
 
 Emitted when the pull request's source branch receives new commits. A metadata-only edit, such as a title change, is not an update.
 
+| Field | Required |
+|---|---|
+| `source_repo` | no |
+| `source_branch` | no |
+| `target_repo` | no |
+| `target_branch` | no |
+
+Without optional fields:
+
 ```json
 "data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "source_repo": "https://github.com/user/fork", "source_branch": "feature/login", "target_repo": "https://github.com/upstream/project", "target_branch": "main" }
 ```
 
 ### `devevents.vcs.pullrequest.merged`
 
 Emitted when the pull request is merged. A merge does not also emit `devevents.vcs.pullrequest.closed`.
 
+| Field | Required |
+|---|---|
+| `source_repo` | no |
+| `source_branch` | no |
+| `target_repo` | no |
+| `target_branch` | no |
+
+Without optional fields:
+
 ```json
 "data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "source_repo": "https://github.com/user/fork", "source_branch": "feature/login", "target_repo": "https://github.com/upstream/project", "target_branch": "main" }
 ```
 
 ### `devevents.vcs.pullrequest.closed`
 
 Emitted when the pull request is closed without being merged. `merged` and `closed` are mutually exclusive.
 
+| Field | Required |
+|---|---|
+| `source_repo` | no |
+| `source_branch` | no |
+| `target_repo` | no |
+| `target_branch` | no |
+
+Without optional fields:
+
 ```json
 "data": {}
+```
+
+With every optional field:
+
+```json
+"data": { "source_repo": "https://github.com/user/fork", "source_branch": "feature/login", "target_repo": "https://github.com/upstream/project", "target_branch": "main" }
 ```
 
 ### `devevents.file.opened`
