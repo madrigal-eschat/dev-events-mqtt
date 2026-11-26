@@ -124,6 +124,9 @@ The optional fields are for the preservation of a user's privacy, should they
 wish it. Producers MUST offer the user a configuration option to avoid
 publishing any of the optional fields.
 
+Prompts, agent output, file contents, and credentials are never valid payload
+fields for `devevents.agent.*` events.
+
 Code quality assessments (inspections, linting, static analysis) can be expressed as task events, not a dedicated event type.
 
 ### `devevents.task.started`
@@ -364,24 +367,6 @@ Emitted once per second when keypress count is greater than zero, and once more 
 ```json
 "data": { "count": 37 }
 ```
-
-The agent event types were added in version 1.1.
-
-Agent events describe the lifecycle of a coding agent session: the agent
-starts, runs one or more turns, and exits. A turn is one unit of agent work,
-beginning when the agent starts acting on a request and ending when it stops.
-
-The following optional fields may appear in an agent event's `data`:
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `agent` | string | no | Agent identifier or name, when known. |
-| `session` | string | no | Opaque identifier of the agent session, so concurrent agents can be told apart. |
-| `worktree` | string | no | Worktree path or identifier, when available. |
-
-Optional fields MUST be omitted when unavailable, never sent as `null` or a
-placeholder value. Prompts, agent output, file contents, and credentials are
-never valid payload fields.
 
 ### `devevents.agent.started`
 
