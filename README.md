@@ -51,7 +51,7 @@ dependency pinned to a release tag, never a branch:
 
 ```json
 "dependencies": {
-  "dev-events-mqtt": "github:madrigal-eschat/dev-events-mqtt#v1.1.0"
+  "dev-events-mqtt": "github:madrigal-eschat/dev-events-mqtt#v1.2.0"
 }
 ```
 
